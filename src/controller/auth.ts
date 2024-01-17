@@ -8,6 +8,7 @@ import { createUser, getUserByEmail } from "../db/users";
 import { authentication, random } from "../helpers/auth";
 import { sendAPIResponse } from "../helpers/respond";
 import validateAccess from "../helpers/validateAccess";
+import { getUser } from "./users";
 
 // Code + Exports
 
@@ -49,8 +50,11 @@ export const login = async (req: express.Request, res: express.Response) => {
 
     await user.save();
 
-    return res.status(200).json(sendAPIResponse(200, "Logged in.", null, null))
-      .end;
+    const returnableUser = getUserByEmail(email);
+
+    return res
+      .status(200)
+      .json(sendAPIResponse(200, "Logged in.", returnableUser, "json")).end;
   } catch (error) {
     console.log(error);
     res.status(500).json(sendAPIResponse(500, "Our bad.", null, null)).end();
